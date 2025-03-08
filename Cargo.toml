@@ -1,0 +1,108 @@
+[package]
+name = "pythnet-heisenberg"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anchor-lang = "0.30.1"
+anyhow = "1.0.97"
+clap = { version = "4.5.31", features = ["derive", "string"] }
+num-format = { version = "0.4.4" }
+reqwest = "0.12.12"
+solana-sdk = "1.18"
+solana-program = "1.18"
+solana-rpc-client = "1.18"
+solana-rpc-client-api = "1.18"
+tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
+
+[dependencies.stake_caps_parameters]
+git = "https://github.com/pyth-network/pyth-crosschain.git"
+version = "0.1.0"
+
+# === Versioning issues ===
+#
+# All of the below is needed to resolve version conflicts between dependencies
+# in our dependency tree.
+#
+# I've tried using 2.2.1 packages for Solana which removes some of the problems,
+# but causes issues with the SDK types, such as the `Pubkey` being incompatible
+# between abstractions built with the 1.18 and 2.x codebases.  Which is also
+# quite annoying.  So, I figured fixing the dependency tree is probably a better
+# choice.
+#
+# These fixes are very likely to break should we try to move this app to a newer
+# SDK.
+
+# Our dependency tree has `curve25519-dalek` v3.2.1 which locks zeroize to
+# `>=1.0, <1.4`.  But `reqwest` wants `zeroize` v1.7.0.
+#
+# It seems wrong for `curve25519-dalek` to constrain a dependency maximum patch
+# version.  And a commit that removes the `zeroize` constrain was added to
+# multiple release branches.  Bot not to the 3.2 branch.
+#
+# `curve25519-dalek` maintainers are saying they do not want to invest any more
+# time in the 3.2 release:
+#
+# https://github.com/dalek-cryptography/curve25519-dalek/issues/452#issuecomment-1749809428
+#
+# So we have to fork and create our own release, based on v3.2.1.  Commit that
+# removed `zeroize` constrain on the `main` branch cherry picked on top of the
+# v3.2.1 release.
+#
+# `curve25519-dalek` v3.2.1 release:
+#
+# https://github.com/dalek-cryptography/curve25519-dalek/releases/tag/3.2.1
+#
+# Corresponds to commit
+#
+# https://github.com/dalek-cryptography/curve25519-dalek/commit/29e5c29b0e5c6821e4586af58b0d0891dd2ec639
+#
+# Comparison with `c14774464c4d38de553c6ef2f48a10982c1b4801`:
+#
+# https://github.com/dalek-cryptography/curve25519-dalek/compare/3.2.1...solana-labs:curve25519-dalek:c14774464c4d38de553c6ef2f48a10982c1b4801
+#
+# Or, using the branch name instead of the hash:
+#
+# https://github.com/dalek-cryptography/curve25519-dalek/compare/3.2.1...solana-labs:curve25519-dalek:3.2.1-unpin-zeroize
+#
+# This patch was also present in the Agave main repo, until recently:
+#
+#   https://github.com/solana-labs/solana/pull/33516
+#
+[patch.crates-io.curve25519-dalek]
+git = "https://github.com/solana-labs/curve25519-dalek.git"
+rev = "c14774464c4d38de553c6ef2f48a10982c1b4801"
+
+# `aes-gcm-siv` version 0.10.3, that we have in our dependency tree has overly
+# restrictive dependencies on both `zeroize` (`>=1, <1.4) and `subtle` (`>=2,
+# <2.5`).  Cargo does not allow multiple version of the same crate with the same
+# major version, meaning that if we also have `zeroize` 1.5 or any later
+# version.  Our dependency graph is just broken.
+#
+# Details are here
+#
+# https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#multiple-requirements
+#
+# Unfortunately, there are no `aes-gcm-siv` releases in the 0.10 branch that
+# would removed these constrains, even though they are removed in the 0.11
+# branch.
+#
+# `zeroize` constrains are removed in 6105d7a5591aefa646a95d12b5e8d3f55a9214ef,
+# which is the next commit after the v0.10.3 release.  But the `subtle`
+# constrain are removed a bit later, with some other changes in-between.
+#
+# Comparison with `6105d7a5591aefa646a95d12b5e8d3f55a9214ef`:
+#
+# https://github.com/RustCrypto/AEADs/compare/aes-gcm-siv-v0.10.3..6105d7a5591aefa646a95d12b5e8d3f55a9214ef
+
+# Comparison with `e1e35e0c4f4943da0a99ceb8477c421dcfae2c33`:
+#
+# https://github.com/RustCrypto/AEADs/compare/aes-gcm-siv-v0.10.3..e1e35e0c4f4943da0a99ceb8477c421dcfae2c33
+#
+# `e1e35e0c4f4943da0a99ceb8477c421dcfae2c33` seems to be working, so I'll use
+# it.  Otherwise I would have to create a fork and cherry pick just the
+# `6105d7a5591aefa646a95d12b5e8d3f55a9214ef` and
+# `e1e35e0c4f4943da0a99ceb8477c421dcfae2c33` in there.
+[patch.crates-io.aes-gcm-siv]
+git = "https://github.com/RustCrypto/AEADs"
+rev = "e1e35e0c4f4943da0a99ceb8477c421dcfae2c33"
