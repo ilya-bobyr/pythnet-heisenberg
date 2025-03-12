@@ -2,6 +2,7 @@ use clap::{Parser, Subcommand};
 use num_format::{Locale, ToFormattedString, parsing::ParseFormatted};
 
 pub mod json_rpc_url_args;
+pub mod primordial_accounts;
 pub mod stake_caps_parameters;
 
 pub use json_rpc_url_args::JsonRpcUrlArgs;
@@ -17,6 +18,12 @@ pub struct Args {
 /// A specific action to perform.
 #[derive(Subcommand, Debug)]
 pub enum Command {
+    #[command(subcommand)]
+    /// Helps populate the primordial accounts file.
+    ///
+    /// See `solana-genesis --primordial-accounts-file`.
+    PrimordialAccounts(primordial_accounts::Command),
+
     #[command(subcommand)]
     /// Interact with the stake caps parameters program.
     StakeCapsParameters(stake_caps_parameters::Command),

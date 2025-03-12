@@ -10,7 +10,7 @@ use stake_caps_parameters as program;
 use crate::{
     args::{JsonRpcUrlArgs, stake_caps_parameters::set_parameters::SetParametersArgs},
     keypair_ext::read_keypair_file,
-    rpc_client_ext::RpcClientExt as _,
+    rpc_client_ext::RpcClientExt,
 };
 
 pub async fn run(
@@ -32,7 +32,7 @@ pub async fn run(
     let parameters_account = parameters_account
         .unwrap_or_else(|| Pubkey::find_program_address(&[b"parameters"], &program_id).0);
 
-    let accounts = stake_caps_parameters::accounts::SetParameters {
+    let accounts = program::accounts::SetParameters {
         signer: signer_pubkey,
         parameters: parameters_account,
         system_program: system_program::id(),
