@@ -33,6 +33,15 @@ tokio-util = "0.7.14"
 git = "https://github.com/pyth-network/pyth-crosschain.git"
 version = "0.1.0"
 
+# NOTE: Enable this dependency, when you need to compute account sizes.  Other
+# than that, it is not used at the moment and it brings a lot of new indirect
+# dependencies with it.
+#
+# [dependencies.pyth-oracle]
+# git = "https://github.com/ilya-bobyr/pyth-client.git"
+# branch = "pythnet-update-oracle-v2.33.2"
+# features = ["library"]
+
 # === Versioning issues ===
 #
 # All of the below is needed to resolve version conflicts between dependencies
