@@ -2,6 +2,7 @@ use clap::{Parser, Subcommand};
 use num_format::{Locale, ToFormattedString, parsing::ParseFormatted};
 
 pub mod json_rpc_url_args;
+pub mod oracle;
 pub mod primordial_accounts;
 pub mod stake_caps_parameters;
 
@@ -27,6 +28,10 @@ pub enum Command {
     #[command(subcommand)]
     /// Interact with the stake caps parameters program.
     StakeCapsParameters(stake_caps_parameters::Command),
+
+    #[command(subcommand)]
+    /// Interacts with the Oracle program.
+    Oracle(oracle::Command),
 }
 
 fn u64_nice_parser(value: &str) -> Result<u64, String> {
