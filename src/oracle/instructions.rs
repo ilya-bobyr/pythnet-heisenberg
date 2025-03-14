@@ -9,6 +9,7 @@
 use bytemuck::{Pod, Zeroable};
 use solana_program::pubkey::Pubkey;
 
+pub mod init_mapping;
 pub mod update_permissions;
 
 pub const PC_VERSION: u32 = 2;
@@ -18,6 +19,12 @@ pub const PC_VERSION: u32 = 2;
 /// This is a partial copy of the `OracleCommand`.  I've only took commands that matter for this
 /// tool.
 pub enum OracleCommand {
+    /// Initialize first mapping list account
+    // account[0] funding account       [signer writable]
+    // account[1] mapping account       [signer writable]
+    // account[2] permissions account   []
+    #[allow(dead_code)]
+    InitMapping = 0,
     /// Update authorities
     // key[0] upgrade authority         [signer writable]
     // key[1] programdata account       []
