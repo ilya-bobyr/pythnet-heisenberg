@@ -16,7 +16,6 @@ pub fn read_keypair_file(path: impl AsRef<Path>) -> Result<Keypair> {
         .with_context(|| format!("Error reading a keypair from: {}", path.to_string_lossy()))
 }
 
-#[allow(unused)]
 pub fn read_or_generate_keypair_file(path: impl AsRef<Path>) -> Result<Keypair> {
     let path = path.as_ref();
 
