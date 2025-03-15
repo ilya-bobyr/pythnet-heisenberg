@@ -3,6 +3,7 @@ use solana_program::system_instruction;
 use solana_rpc_client::{
     http_sender::HttpSender, nonblocking::rpc_client::RpcClient, rpc_client::RpcClientConfig,
 };
+use solana_rpc_client_api::config::RpcSendTransactionConfig;
 use solana_sdk::{rent::Rent, signer::Signer as _};
 
 use crate::{
@@ -30,12 +31,13 @@ pub async fn run(
     let mapping = read_keypair_file(&mapping_keypair)?;
     let mapping_pubkey = mapping.pubkey();
 
-    let mapping_size = MAPPING_ACCOUNT_MIN_SIZE;
+    // let mapping_size = MAPPING_ACCOUNT_MIN_SIZE + 10;
+    let mapping_size = 10 * 1024 * 1024;
     let mapping_lamports = Rent::default()
         .minimum_balance(usize::try_from(mapping_size).expect("Account size fits into a usize"));
 
     let signature = rpc_client
-        .send_with_payer_latest_blockhash_with_spinner(
+        .send_with_payer_latest_blockhash_with_spinner_and_config(
             &[
                 system_instruction::create_account(
                     &funding_pubkey,
@@ -53,6 +55,10 @@ pub async fn run(
             ],
             Some(&funding_pubkey),
             &[&funding, &mapping],
+            RpcSendTransactionConfig {
+                skip_preflight: true,
+                ..Default::default()
+            },
         )
         .await
         .context("Transaction execution failed")?;
