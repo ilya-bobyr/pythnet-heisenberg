@@ -3,6 +3,7 @@
 use std::path::Path;
 
 use anyhow::{Context as _, Result, anyhow};
+use rand_0_7::rngs::OsRng;
 use solana_sdk::{signature::Keypair, signer::EncodableKey};
 
 pub fn read_keypair_file(path: impl AsRef<Path>) -> Result<Keypair> {
@@ -13,4 +14,20 @@ pub fn read_keypair_file(path: impl AsRef<Path>) -> Result<Keypair> {
         // instance explicitly here.
         .map_err(|err| anyhow!(err.to_string()))
         .with_context(|| format!("Error reading a keypair from: {}", path.to_string_lossy()))
+}
+
+#[allow(unused)]
+pub fn read_or_generate_keypair_file(path: impl AsRef<Path>) -> Result<Keypair> {
+    let path = path.as_ref();
+
+    if path.exists() {
+        return read_keypair_file(path);
+    }
+
+    let key = Keypair::generate(&mut OsRng);
+    key.write_to_file(path)
+        .map_err(|err| anyhow!(err.to_string()))
+        .with_context(|| format!("Error reading a keypair from: {}", path.to_string_lossy()))?;
+
+    Ok(key)
 }

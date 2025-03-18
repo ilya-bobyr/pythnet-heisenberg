@@ -3700,6 +3700,7 @@ dependencies = [
  "bincode 2.0.1",
  "clap 4.5.31",
  "num-format",
+ "rand 0.7.3",
  "reqwest 0.12.12",
  "serde",
  "serde_yaml",
