@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod add_product;
 pub mod init_mapping;
 pub mod update_permissions;
 
@@ -11,4 +12,7 @@ pub enum Command {
 
     /// Initialize a mapping - root account used to describe a set of products, and their prices.
     InitMapping(init_mapping::InitMappingArgs),
+
+    /// Adds one or more products to a mapping.
+    AddProduct(add_product::AddProductArgs),
 }
