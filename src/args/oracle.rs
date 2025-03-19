@@ -2,6 +2,7 @@ use clap::Subcommand;
 
 pub mod add_price;
 pub mod add_product;
+pub mod add_publisher;
 pub mod init_mapping;
 pub mod update_permissions;
 
@@ -19,4 +20,7 @@ pub enum Command {
 
     /// Adds a new price account to a product account.
     AddPrice(add_price::AddPriceArgs),
+
+    /// Adds a publisher to a price account.
+    AddPublisher(add_publisher::AddPublisherArgs),
 }
