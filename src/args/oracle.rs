@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod add_price;
 pub mod add_product;
 pub mod init_mapping;
 pub mod update_permissions;
@@ -15,4 +16,7 @@ pub enum Command {
 
     /// Adds one or more products to a mapping.
     AddProduct(add_product::AddProductArgs),
+
+    /// Adds a new price account to a product account.
+    AddPrice(add_price::AddPriceArgs),
 }
