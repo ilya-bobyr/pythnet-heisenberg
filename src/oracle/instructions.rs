@@ -9,6 +9,7 @@
 use bytemuck::{Pod, Zeroable};
 use solana_program::pubkey::Pubkey;
 
+pub mod add_price;
 pub mod add_product;
 pub mod init_mapping;
 pub mod update_permissions;
@@ -32,6 +33,12 @@ pub enum OracleCommand {
     // account[2] new product account   [signer writable]
     // account[3] permissions account   []
     AddProduct = 2,
+    /// Add new price account to a product account
+    // account[0] funding account       [signer writable]
+    // account[1] product account       [writable]
+    // account[2] new price account     [writable]
+    // account[3] permissions account   [writable]
+    AddPrice = 4,
     /// Update authorities
     // key[0] upgrade authority         [signer writable]
     // key[1] programdata account       []
