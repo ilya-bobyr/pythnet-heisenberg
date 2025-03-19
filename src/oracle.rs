@@ -2,6 +2,7 @@ use anyhow::Result;
 
 use crate::args::oracle::Command;
 
+mod add_price;
 mod add_product;
 mod init_mapping;
 pub mod instructions;
@@ -15,5 +16,6 @@ pub async fn run(command: Command) -> Result<()> {
             args.check_are_valid()?;
             add_product::run(args).await
         }
+        Command::AddPrice(args) => add_price::run(args).await,
     }
 }
