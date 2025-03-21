@@ -774,6 +774,7 @@ version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c8214115b7bf84099f1309324e63141d4c5d7cc26862f97a0a857dbefe165bd"
 dependencies = [
+ "bytemuck",
  "serde",
 ]
 
@@ -3746,6 +3747,7 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "bincode 2.0.1",
+ "bitflags 2.9.0",
  "bytemuck",
  "clap 4.5.31",
  "enum-utils",
