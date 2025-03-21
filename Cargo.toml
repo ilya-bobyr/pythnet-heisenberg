@@ -28,14 +28,18 @@ tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
 git = "https://github.com/pyth-network/pyth-crosschain.git"
 version = "0.1.0"
 
-# NOTE: Enable this dependency, when you need to compute account sizes.  Other
-# than that, it is not used at the moment and it brings a lot of new indirect
-# dependencies with it.
+# NOTE: Enable these dependencies, when you need to compute account sizes.
+# Other than that, it is not used at the moment and it brings a lot of new
+# indirect dependencies with it.
 #
 # [dependencies.pyth-oracle]
 # git = "https://github.com/ilya-bobyr/pyth-client.git"
 # branch = "pythnet-update-oracle-v2.33.2"
 # features = ["library"]
+#
+# [dependencies.pyth-price-store]
+# git = "https://github.com/pyth-network/pyth-crosschain.git"
+# branch = "main"
 
 # === Versioning issues ===
 #
