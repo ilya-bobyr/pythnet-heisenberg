@@ -3,6 +3,7 @@ use clap::Subcommand;
 pub mod add_price;
 pub mod add_product;
 pub mod add_publisher;
+pub mod get_price_feed_index;
 pub mod init_mapping;
 pub mod update_permissions;
 
@@ -23,4 +24,7 @@ pub enum Command {
 
     /// Adds a publisher to a price account.
     AddPublisher(add_publisher::AddPublisherArgs),
+
+    /// Reads the price feed index for a particular price account.
+    GetPriceFeedIndex(get_price_feed_index::GetPriceFeedIndexArgs),
 }
