@@ -19,6 +19,7 @@ use solana_program::pubkey::Pubkey;
 
 pub mod initialize;
 pub mod initialize_publisher;
+pub mod submit_prices;
 
 pub const CONFIG_SEED: &str = "CONFIG";
 
@@ -32,6 +33,10 @@ pub enum InstructionId {
     // key[1] config    [writable]
     // key[2] system    []
     Initialize = 0,
+    // key[0] publisher        [signer writable]
+    // key[1] publisher_config []
+    // key[2] buffer           [writable]
+    SubmitPrices = 1,
     // key[0] autority         [signer writable]
     // key[1] config           []
     // key[2] publisher_config [writable]
