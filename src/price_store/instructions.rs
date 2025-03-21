@@ -18,8 +18,11 @@
 use solana_program::pubkey::Pubkey;
 
 pub mod initialize;
+pub mod initialize_publisher;
 
 pub const CONFIG_SEED: &str = "CONFIG";
+
+pub const PUBLISHER_CONFIG_SEED: &str = "PUBLISHER_CONFIG";
 
 #[repr(u8)]
 #[derive(PartialEq, Eq)]
@@ -29,9 +32,33 @@ pub enum InstructionId {
     // key[1] config    [writable]
     // key[2] system    []
     Initialize = 0,
+    // key[0] autority         [signer writable]
+    // key[1] config           []
+    // key[2] publisher_config [writable]
+    // key[3] buffer           [writable]
+    // key[4] system           []
+    InitializePublisher = 2,
 }
 
 /// Address of the Price Store config account.
 fn compute_config_account(program_id: Pubkey) -> (Pubkey, u8) {
     Pubkey::find_program_address(&[CONFIG_SEED.as_bytes()], &program_id)
+}
+
+/// Address of the Price Store config account for a given publisher.
+fn compute_publisher_config_account(program_id: Pubkey, publisher: Pubkey) -> (Pubkey, u8) {
+    Pubkey::find_program_address(
+        &[PUBLISHER_CONFIG_SEED.as_bytes(), &publisher.to_bytes()],
+        &program_id,
+    )
+}
+
+/// Size of a buffer account that can hold this many price updates.
+pub fn buffer_account_size(max_prices: u64) -> u64 {
+    const HEADER_SIZE: u64 = 48;
+    const ENTRY_SIZE: u64 = 20;
+
+    // use pyth_price_store::accounts::buffer::{BufferHeader, BufferedPrice};
+    // size_of::<BufferHeader>() + max_prices * size_of::<BufferedPrice>()
+    HEADER_SIZE + max_prices * ENTRY_SIZE
 }
