@@ -3,6 +3,7 @@ use num_format::{Locale, ToFormattedString, parsing::ParseFormatted};
 
 pub mod json_rpc_url_args;
 pub mod oracle;
+pub mod price_store;
 pub mod primordial_accounts;
 pub mod stake_caps_parameters;
 
@@ -32,6 +33,10 @@ pub enum Command {
     #[command(subcommand)]
     /// Interacts with the Oracle program.
     Oracle(oracle::Command),
+
+    #[command(subcommand)]
+    /// Interacts with the Price Store program.
+    PriceStore(price_store::Command),
 }
 
 fn u64_nice_parser(value: &str) -> Result<u64, String> {
