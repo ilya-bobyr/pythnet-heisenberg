@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use clap::Args;
 use reqwest::Url;
 use solana_rpc_client::{
@@ -19,8 +17,9 @@ pub fn get_rpc_client(JsonRpcUrlArgs { rpc_url }: JsonRpcUrlArgs) -> RpcClient {
     RpcClient::new_sender(
         HttpSender::new(rpc_url),
         RpcClientConfig {
-            commitment_config: CommitmentConfig::confirmed(),
-            confirm_transaction_initial_timeout: Some(Duration::from_millis(100)),
+            // TODO Expose as a CLI argument.
+            commitment_config: CommitmentConfig::finalized(),
+            confirm_transaction_initial_timeout: None,
         },
     )
 }
