@@ -19,8 +19,8 @@ pub fn get_rpc_client(JsonRpcUrlArgs { rpc_url }: JsonRpcUrlArgs) -> RpcClient {
     RpcClient::new_sender(
         HttpSender::new(rpc_url),
         RpcClientConfig {
-            commitment_config: CommitmentConfig::confirmed(),
-            confirm_transaction_initial_timeout: Some(Duration::from_millis(100)),
+            commitment_config: CommitmentConfig::finalized(),
+            confirm_transaction_initial_timeout: None,
         },
     )
 }
