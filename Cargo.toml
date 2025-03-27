@@ -12,6 +12,7 @@ bitflags = { version = "2.9.0", features = ["bytemuck"] }
 bytemuck = { version = "1.22.0", features = ["derive"] }
 clap = { version = "4.5.31", features = ["derive", "string"] }
 enum-utils = "0.1.2"
+futures = "0.3.31"
 log = "0.4.27"
 num-derive = "0.4.2"
 num-format = { version = "0.4.4" }
@@ -23,6 +24,7 @@ serde = { version = "1.0.219", features = ["derive"] }
 serde_yaml = "0.9.34"
 solana-genesis = "1.18"
 solana-program = "1.18"
+solana-pubsub-client = "1.18"
 solana-rpc-client = "1.18"
 solana-rpc-client-api = "1.18"
 solana-sdk = "1.18"
