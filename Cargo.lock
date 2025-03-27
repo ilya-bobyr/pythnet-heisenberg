@@ -1407,6 +1407,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-encoding"
+version = "2.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "575f75dfd25738df5b91b8e43e14d44bda14637a58fae779fd2b064f8bf3e010"
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3699,6 +3705,7 @@ dependencies = [
  "base64 0.22.1",
  "bincode 2.0.1",
  "clap 4.5.31",
+ "futures",
  "log",
  "num-format",
  "parking_lot 0.12.3",
@@ -3708,6 +3715,7 @@ dependencies = [
  "serde_yaml",
  "solana-genesis",
  "solana-program",
+ "solana-pubsub-client",
  "solana-rpc-client",
  "solana-rpc-client-api",
  "solana-sdk",
@@ -3960,7 +3968,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "webpki-roots",
+ "webpki-roots 0.25.4",
  "winreg",
 ]
 
@@ -5066,6 +5074,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-pubsub-client"
+version = "1.18.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b064e76909d33821b80fdd826e6757251934a52958220c92639f634bea90366d"
+dependencies = [
+ "crossbeam-channel",
+ "futures-util",
+ "log",
+ "reqwest 0.11.27",
+ "semver",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "solana-account-decoder",
+ "solana-rpc-client-api",
+ "solana-sdk",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite",
+ "tungstenite",
+ "url",
+]
+
+[[package]]
 name = "solana-rayon-threadlimit"
 version = "1.18.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6099,6 +6132,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-tungstenite"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "212d5dcb2a1ce06d81107c3d0ffa3121fe974b73f068c8282cb1c32328113b6c"
+dependencies = [
+ "futures-util",
+ "log",
+ "rustls 0.21.12",
+ "tokio",
+ "tokio-rustls 0.24.1",
+ "tungstenite",
+ "webpki-roots 0.25.4",
+]
+
+[[package]]
 name = "tokio-util"
 version = "0.7.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6283,6 +6331,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
+name = "tungstenite"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9e3dac10fd62eaf6617d3a904ae222845979aec67c615d1c842b4002c7666fb9"
+dependencies = [
+ "byteorder",
+ "bytes",
+ "data-encoding",
+ "http 0.2.12",
+ "httparse",
+ "log",
+ "rand 0.8.5",
+ "rustls 0.21.12",
+ "sha1",
+ "thiserror",
+ "url",
+ "utf-8",
+ "webpki-roots 0.24.0",
+]
+
+[[package]]
 name = "typenum"
 version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6378,6 +6447,12 @@ dependencies = [
  "idna",
  "percent-encoding",
 ]
+
+[[package]]
+name = "utf-8"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09cc8ee72d2a9becf2f2febe0205bbed8fc6615b7cb429ad062dc7b7ddd036a9"
 
 [[package]]
 name = "utf16_iter"
@@ -6556,6 +6631,15 @@ checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "webpki-roots"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b291546d5d9d1eab74f069c77749f2cb8504a12caa20f0f2de93ddbf6f411888"
+dependencies = [
+ "rustls-webpki 0.101.7",
 ]
 
 [[package]]
