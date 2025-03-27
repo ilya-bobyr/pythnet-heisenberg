@@ -10,16 +10,21 @@ base64 = "0.22.1"
 bincode = { version = "2.0.1", features = ["serde"] }
 bitflags = { version = "2.9.0", features = ["bytemuck"] }
 bytemuck = { version = "1.22.0", features = ["derive"] }
+chrono = { version = "0.4.40", default-features = false }
 clap = { version = "4.5.31", features = ["derive", "string"] }
+derive_more = { version = "2.0.1", features = ["add", "add_assign"] }
 enum-utils = "0.1.2"
 futures = "0.3.31"
+humantime = "2.2.0"
 itertools = "0.14.0"
 log = "0.4.27"
+noise = "0.9.0"
 num-derive = "0.4.2"
 num-format = { version = "0.4.4" }
 num-traits = "0.2.19"
 once_cell = "1.21.3"
 parking_lot = "0.12.3"
+rand = { package = "rand", version = "0.9.0" }
 rand_0_7 = { package = "rand", version = "0.7.3" }
 regex = "1.11.1"
 reqwest = "0.12.12"
@@ -31,8 +36,12 @@ solana-pubsub-client = "1.18"
 solana-rpc-client = "1.18"
 solana-rpc-client-api = "1.18"
 solana-sdk = "1.18"
-tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
+tokio-stream = { version = "0.1.17", features = ["signal"] }
 tokio-util = "0.7.14"
+
+[dependencies.tokio]
+version = "1.43.0"
+features = ["macros", "rt-multi-thread", "signal"]
 
 [dependencies.stake_caps_parameters]
 git = "https://github.com/pyth-network/pyth-crosschain.git"
