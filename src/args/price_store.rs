@@ -1,5 +1,6 @@
 use clap::Subcommand;
 
+pub mod benchmark1;
 pub mod initialize;
 pub mod initialize_publisher;
 pub mod submit_prices;
@@ -15,4 +16,10 @@ pub enum Command {
 
     /// Publish a price from a specific publisher.
     SubmitPrices(submit_prices::SubmitPricesArgs),
+
+    /// Continuously sends price traffic to the Price Store.
+    ///
+    /// Will stop either when the specified duration has elapsed (`--duration`) or if an INT or a
+    /// TERM signal is received.
+    Benchmark1(benchmark1::Benchmark1Args),
 }
