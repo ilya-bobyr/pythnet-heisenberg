@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::Parser as _;
 
 mod args;
+pub mod blockhash_cache;
 pub(crate) mod keypair_ext;
 mod primordial_accounts;
 pub(crate) mod rpc_client_ext;

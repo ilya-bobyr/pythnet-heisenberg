@@ -9,7 +9,9 @@ anyhow = "1.0.97"
 base64 = "0.22.1"
 bincode = { version = "2.0.1", features = ["serde"] }
 clap = { version = "4.5.31", features = ["derive", "string"] }
+log = "0.4.27"
 num-format = { version = "0.4.4" }
+parking_lot = "0.12.3"
 rand_0_7 = { package = "rand", version = "0.7.3" }
 reqwest = "0.12.12"
 serde = { version = "1.0.219", features = ["derive"] }
@@ -20,6 +22,7 @@ solana-rpc-client = "1.18"
 solana-rpc-client-api = "1.18"
 solana-sdk = "1.18"
 tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
+tokio-util = "0.7.14"
 
 [dependencies.stake_caps_parameters]
 git = "https://github.com/pyth-network/pyth-crosschain.git"
