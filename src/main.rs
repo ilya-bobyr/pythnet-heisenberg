@@ -4,6 +4,7 @@ use clap::Parser as _;
 mod args;
 pub mod blockhash_cache;
 pub(crate) mod keypair_ext;
+pub mod node_address_service;
 mod primordial_accounts;
 pub(crate) mod rpc_client_ext;
 mod stake_caps_parameters;
