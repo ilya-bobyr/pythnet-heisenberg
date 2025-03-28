@@ -93,6 +93,7 @@ pub async fn run(
     let mut publishers = izip!(payers, publishers, price_buffer_pubkeys)
         .map(|(payer, publisher, price_buffer)| {
             run_publisher(
+                &rpc_client,
                 program_id,
                 payer,
                 publisher,
@@ -164,6 +165,25 @@ pub async fn run(
 pub enum PriceUpdateResult {
     Success,
     Fail,
+}
+
+impl PriceUpdateResult {
+    pub fn from_result<T, E>(result: &Result<T, E>) -> Self {
+        match result {
+            Ok(_) => Self::Success,
+            Err(_) => Self::Fail,
+        }
+    }
+}
+
+trait ResultIntoPriceUpdateResult {
+    fn into_price_update_result(&self) -> PriceUpdateResult;
+}
+
+impl<T, E> ResultIntoPriceUpdateResult for Result<T, E> {
+    fn into_price_update_result(&self) -> PriceUpdateResult {
+        PriceUpdateResult::from_result(self)
+    }
 }
 
 #[derive(Debug, Clone, Default, Add, AddAssign)]
