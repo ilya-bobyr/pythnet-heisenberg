@@ -29,6 +29,7 @@ rand_0_7 = { package = "rand", version = "0.7.3" }
 regex = "1.11.1"
 reqwest = "0.12.12"
 serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
 serde_yaml = "0.9.34"
 solana-genesis = "1.18"
 solana-program = "1.18"
@@ -36,6 +37,7 @@ solana-pubsub-client = "1.18"
 solana-rpc-client = "1.18"
 solana-rpc-client-api = "1.18"
 solana-sdk = "1.18"
+solana-transaction-status = "1.18"
 tokio-stream = { version = "0.1.17", features = ["signal"] }
 tokio-util = "0.7.14"
 

@@ -96,11 +96,13 @@ pub async fn run(
     let mut stats = RunStats::default();
 
     let publishers_task = {
+        let rpc_client = rpc_client.clone();
         let stats = &mut stats;
         async move |blockhash_cache: &BlockhashCache, node_address_service: NodeAddressService| {
             let mut publishers = izip!(payers, publishers, price_buffer_pubkeys)
                 .map(|(payer, publisher, price_buffer)| {
                     run_publisher(
+                        &rpc_client,
                         program_id,
                         payer,
                         publisher,
@@ -182,6 +184,25 @@ fn print_stats(
 pub enum PriceUpdateResult {
     Success,
     Fail,
+}
+
+impl PriceUpdateResult {
+    pub fn from_result<T, E>(result: Result<T, E>) -> Self {
+        match result {
+            Ok(_) => Self::Success,
+            Err(_) => Self::Fail,
+        }
+    }
+}
+
+trait ResultIntoPriceUpdateResult {
+    fn into_price_update_result(self) -> PriceUpdateResult;
+}
+
+impl<T, E> ResultIntoPriceUpdateResult for Result<T, E> {
+    fn into_price_update_result(self) -> PriceUpdateResult {
+        PriceUpdateResult::from_result(self)
+    }
 }
 
 #[derive(Debug, Clone, Default, Add, AddAssign)]
