@@ -16,6 +16,7 @@ use futures::{StreamExt as _, stream::FuturesUnordered};
 use itertools::izip;
 use log::warn;
 use price_publisher::run_publisher;
+use solana_sdk::signer::Signer as _;
 use tokio::{select, time::sleep};
 use tokio_util::sync::CancellationToken;
 
@@ -84,7 +85,14 @@ pub async fn run(
 
     let mut publishers = izip!(payers, publishers, price_buffer_pubkeys)
         .map(|(payer, publisher, price_buffer)| {
+            //- println!(
+            //-     "D.run.1: Starting run_publisher({}, {}, {}) task.",
+            //-     payer.pubkey(),
+            //-     publisher.pubkey(),
+            //-     price_buffer,
+            //- );
             run_publisher(
+                &rpc_client,
                 program_id,
                 payer,
                 publisher,
@@ -111,16 +119,21 @@ pub async fn run(
             completion_res = publishers.next() => match completion_res {
                 Some(res) => match res {
                     Ok(publisher_stats) => {
+                        //- println!("D.run.2: Publisher task terminated");
                         stats += publisher_stats;
                     }
                     Err(err) => {
+                        //- println!("D.run.2: Publisher task failed");
                         warn!("Publisher task execution failed: {err}");
                     }
                 }
-                None => break,
+                None => {
+                    //- println!("D.run.3: All publishers task are done");
+                    break;
+                }
             },
             () = &mut benchmark_end_timer, if !benchmark_end_timer.is_elapsed() => {
-                println!("D.run.4: Run time ended, setting the exit flag");
+                //- println!("D.run.4: Run time ended, setting the exit flag");
                 exit.cancel();
             }
         }
@@ -131,11 +144,11 @@ pub async fn run(
     exit.cancel();
 
     drop(publishers);
+
     node_address_service
         .join()
         .await
         .context("Waiting for the NodeAddressService task to stop")?;
-
     blockhash_cache_refresh_task.await;
 
     println!("Benchmark end time:   {}", chrono::Local::now());
