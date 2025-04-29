@@ -11,8 +11,52 @@ use log::warn;
 use parking_lot::Mutex;
 use solana_rpc_client::nonblocking::rpc_client::RpcClient;
 use solana_sdk::hash::Hash;
-use tokio::{select, time::sleep};
+use tokio::{pin, select, time::sleep};
 use tokio_util::sync::CancellationToken;
+
+/// Runs the specified asynchronous operation with an access to a [`BlockhashCache`] instance, that
+/// is kept up to date.
+pub fn run_with_blockhash<'rpc_client, 'context, T, Op, OpRes>(
+    rpc_client: &'rpc_client RpcClient,
+    op: Op,
+) -> impl Future<Output = Result<T>> + 'rpc_client + 'context
+where
+    for<'cache> Op: FnOnce(/* blockhash_cache: */ &'cache BlockhashCache) -> OpRes
+        + 'rpc_client + 'context + 'cache,
+    OpRes: Future<Output = Result<T>> + 'rpc_client + 'context,
+    'rpc_client: 'context,
+{
+    async move {
+        let services_shutdown = CancellationToken::new();
+
+        let blockhash_cache = BlockhashCache::uninitialized();
+        blockhash_cache.init(&rpc_client).await;
+
+        let blockhash_cache_refresh_task = blockhash_cache.run_refresh_loop(
+            &rpc_client,
+            Duration::from_millis(400),
+            services_shutdown.clone(),
+        );
+        pin!(blockhash_cache_refresh_task);
+
+        let op_task = op(&blockhash_cache);
+        pin!(op_task);
+
+        let op_res = loop {
+            select! {
+                op_res = &mut op_task => break op_res,
+                () = &mut blockhash_cache_refresh_task => {
+                    panic!("BlockhashCache should not stop until requested");
+                }
+            }
+        };
+
+        services_shutdown.cancel();
+        blockhash_cache_refresh_task.await;
+
+        op_res
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct BlockhashCache {
