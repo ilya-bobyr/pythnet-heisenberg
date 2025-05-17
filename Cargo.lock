@@ -3786,6 +3786,7 @@ dependencies = [
  "enum-utils",
  "futures",
  "humantime",
+ "indicatif",
  "itertools 0.14.0",
  "log",
  "noise",

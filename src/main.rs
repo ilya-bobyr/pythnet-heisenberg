@@ -10,6 +10,7 @@ mod price_store;
 mod primordial_accounts;
 pub(crate) mod rpc_client_ext;
 mod stake_caps_parameters;
+mod tx_sheppard;
 
 #[tokio::main]
 async fn main() -> Result<()> {
