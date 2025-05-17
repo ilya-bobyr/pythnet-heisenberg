@@ -16,6 +16,7 @@ derive_more = { version = "2.0.1", features = ["add", "add_assign"] }
 enum-utils = "0.1.2"
 futures = "0.3.31"
 humantime = "2.2.0"
+indicatif = "0.17.11"
 itertools = "0.14.0"
 log = "0.4.27"
 noise = "0.9.0"
