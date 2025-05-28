@@ -3802,6 +3802,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml",
+ "solana-account-decoder",
  "solana-genesis",
  "solana-program",
  "solana-pubsub-client",

@@ -6,6 +6,7 @@ pub mod oracle;
 pub mod price_store;
 pub mod primordial_accounts;
 pub mod stake_caps_parameters;
+pub mod transfer;
 
 pub use json_rpc_url_args::JsonRpcUrlArgs;
 
@@ -25,6 +26,13 @@ pub enum Command {
     ///
     /// See `solana-genesis --primordial-accounts-file`.
     PrimordialAccounts(primordial_accounts::Command),
+
+    #[command(subcommand)]
+    /// Sends SOL between accounts in parallel.
+    ///
+    /// This is a faster version of `solana transfer` for the cases when you have multiple target
+    /// accounts.
+    Transfer(transfer::Command),
 
     #[command(subcommand)]
     /// Interact with the stake caps parameters program.
