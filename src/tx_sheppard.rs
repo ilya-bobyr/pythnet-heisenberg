@@ -6,7 +6,7 @@
 //!
 //! It also shows progress on the terminal, providing for a nice UI.
 
-use std::{cmp, collections::HashSet, future::pending, time::Duration};
+use std::{cmp, collections::HashSet, time::Duration};
 
 use anyhow::Result;
 use futures::{StreamExt as _, future::BoxFuture, stream::FuturesUnordered};
@@ -32,7 +32,6 @@ use tokio_util::sync::CancellationToken;
 
 use crate::blockhash_cache::BlockhashCache;
 
-#[allow(unused)]
 pub fn with_sheppard(rpc_client: &RpcClient) -> RunWithTxSheppardArgs<'_> {
     RunWithTxSheppardArgs {
         rpc_client,
@@ -76,7 +75,6 @@ impl<'rpc_client> RunWithTxSheppardArgs<'rpc_client> {
         self
     }
 
-    #[allow(unused)]
     pub async fn run<'context, TxBuilder>(
         self,
         tx_builders: impl Iterator<Item = TxBuilder> + Clone + 'context,
@@ -146,8 +144,6 @@ where
         .collect::<FuturesUnordered<_>>();
 
     let mut last_status_check = Instant::now();
-    let mut status_task: BoxFuture<'rpc_client, Result<Vec<TxStatusResult>, RpcClientError>> =
-        Box::pin(pending());
     let mut in_status_check = HashSet::new();
 
     let mut succeeded_count = 0;
@@ -161,6 +157,13 @@ where
     );
     // Update the progress bar twice a second.
     let mut progrss_update_timer = time::interval(Duration::from_millis(500));
+
+    let mut status_task = start_status_check(
+        rpc_client,
+        &mut last_status_check,
+        &execution_status,
+        &in_status_check,
+    );
 
     while !sending_txs.is_empty() || !in_status_check.is_empty() {
         select! {
@@ -216,7 +219,16 @@ where
         };
     }
 
-    progress_bar.set_message("All done");
+    // While we remove the progress bar next, if the console has any intermediate messages, the
+    // very last message might still be visible.  So we want to show the final state.
+    update_progress_bar(
+        &progress_bar,
+        sending_txs.len(),
+        &execution_status,
+        &in_status_check,
+        succeeded_count,
+        failed_count,
+    );
     progress_bar.finish_and_clear();
 
     shutdown.cancel();
@@ -299,8 +311,8 @@ fn start_status_check<'rpc_client>(
     let now = Instant::now();
     let iteration_time = now.duration_since(*last_status_check);
     // Update the status as frequently as we update the UI.
-    let delay = iteration_time.saturating_sub(Duration::from_millis(500));
-    *last_status_check = now;
+    let delay = Duration::from_millis(500).saturating_sub(iteration_time);
+    *last_status_check = now + delay;
 
     let (indices, signatures): (Vec<usize>, Vec<String>) = in_status_check
         .iter()
@@ -422,9 +434,11 @@ fn update_progress_bar(
     succeeded: u64,
     failed: u64,
 ) {
+    progress_bar.tick();
+
     let awaiting_confirmation = in_status_check.len();
 
-    const MAX_CONFIRMATIONS: u8 = (MAX_LOCKOUT_HISTORY - 1) as u8;
+    const MAX_CONFIRMATIONS: u8 = (MAX_LOCKOUT_HISTORY + 1) as u8;
     let min_confirmations = in_status_check
         .iter()
         .map(|idx| execution_status[*idx].status_confirmations())
@@ -521,6 +535,11 @@ impl TargetExecutionStatus {
     }
 
     fn status_absent(&mut self) -> StatusAbsentAction {
+        // Would be nice to have this delay as a configuration option, similar to the other delays.
+        // 5 slots allows us to wait for the next leader, but otherwise it is a rather random
+        // choice.  Plus time does not exactly match slots.
+        const MAX_ABSENT_SLOTS: u64 = 5;
+
         match self {
             Self::Sending { .. } => panic!("Currently in `Sending` state"),
             Self::WaitingConfirmation {
@@ -528,10 +547,7 @@ impl TargetExecutionStatus {
                 retry_count,
                 ..
             } => {
-                // Would be nice to have this delay as a configuration option, similar to the
-                // other delays.  5 slots allows us to wait for the next leader, but otherwise
-                // it is a rather random choice.  Plus time does not exactly match slots.
-                if wait_start.elapsed() < Duration::from_millis(5 * 400) {
+                if wait_start.elapsed() < Duration::from_millis(MAX_ABSENT_SLOTS * 400) {
                     StatusAbsentAction::WaitMore
                 } else if *retry_count > 0 {
                     *self = Self::Sending {
@@ -539,9 +555,9 @@ impl TargetExecutionStatus {
                     };
                     StatusAbsentAction::Retry
                 } else {
-                    *self = Self::Failed(
-                        "Transaction not present in the chain even after 5 slots".to_owned(),
-                    );
+                    *self = Self::Failed(format!(
+                        "Transaction not present in the chain even after {MAX_ABSENT_SLOTS} slots"
+                    ));
                     StatusAbsentAction::Failed
                 }
             }
