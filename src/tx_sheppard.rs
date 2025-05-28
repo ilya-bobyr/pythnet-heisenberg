@@ -32,7 +32,6 @@ use tokio_util::sync::CancellationToken;
 
 use crate::blockhash_cache::BlockhashCache;
 
-#[allow(unused)]
 pub fn with_sheppard(rpc_client: &RpcClient) -> RunWithTxSheppardArgs<'_> {
     RunWithTxSheppardArgs {
         rpc_client,
@@ -76,7 +75,6 @@ impl<'rpc_client> RunWithTxSheppardArgs<'rpc_client> {
         self
     }
 
-    #[allow(unused)]
     pub async fn run<'context, TxBuilder>(
         self,
         tx_builders: impl Iterator<Item = TxBuilder> + Clone + 'context,
